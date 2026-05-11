@@ -15,7 +15,7 @@ SRCS		= main.c signals.c \
 			  executor/expander/expander_str.c executor/expander/expander.c\
 			  lexer/lexer_utils.c lexer/lexer_word.c lexer/lexer.c 
 
-OBJS		= $(SRCS: .c=.o)
+OBJS		= $(SRCS:.c=.o)
 
 LIBFT_DIR	= libft
 LIBFT 		= $(LIBFT_DIR)/libft.a
@@ -37,7 +37,7 @@ clean:
 
 fclean: clean
 		$(MAKE) -C $(LIBFT_DIR) fclean
-		rm -f $(NAME)
+		rm -f $(OBJS)
 
 re: fclean all
 

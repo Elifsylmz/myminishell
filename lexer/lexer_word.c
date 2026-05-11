@@ -52,7 +52,7 @@ t_segment	*extract_word(char *str, int *i)
 	return (segs);
 }
 
-static char	*segments_to_value(t_segment *segs)
+char	*segments_to_value(t_segment *segs)
 {
 	char	*result;
 	char	*tmp;
