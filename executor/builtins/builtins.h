@@ -1,0 +1,19 @@
+#ifndef BUILTINS_H
+# define BUILTINS_H
+
+# include "../../types.h"
+# include "../../minishell.h"
+# include <stdio.h>
+
+int	is_builtin(char *cmd);
+int	run_builtin(t_shell *shell, char **argv);
+
+int	builtin_cd(t_shell *shell, char **argv);
+int	builtin_echo(t_shell *shell, char **argv);
+int	builtin_env(t_shell *shell, char **argv);
+int	builtin_export(t_shell *shell, char **argv);
+int	builtin_unset(t_shell *shell, char **argv);
+int	builtin_exit(t_shell *shell, char **argv);
+int	builtin_pwd(t_shell *shell, char **argv);
+
+#endif
