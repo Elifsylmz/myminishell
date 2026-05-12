@@ -1,26 +1,44 @@
 #include "builtins.h"
 
+static int	is_n_option(char *str)
+{
+	int	i;
+
+	if (!str)
+		return (0);
+	if (str[0] != '-' || str[1] != 'n')
+		return (0);
+	i = 2;
+	while (str[i])
+	{
+		if (str[i] != 'n')
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
 int	builtin_echo(t_shell *shell, char **argv)
 {
-	int i;
-	int newline;
+	int	i;
+	int	newline;
 
 	(void)shell;
-	newline = 1;
 	i = 1;
-	while (argv[i] && ft_strncmp(argv[i], "-n", 3) == 0)
+	newline = 1;
+	while (argv[i] && is_n_option(argv[i]))
 	{
 		newline = 0;
 		i++;
 	}
 	while (argv[i])
 	{
-		printf("%s", argv[i]);
+		ft_putstr_fd(argv[i], 1);
 		if (argv[i + 1])
-			printf(" ");
+			ft_putstr_fd(" ", 1);
 		i++;
 	}
 	if (newline)
-		printf("\n");
+		ft_putstr_fd("\n", 1);
 	return (0);
 }
