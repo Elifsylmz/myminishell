@@ -43,9 +43,7 @@ void	print_tokens(t_token *list)
 				printf("[WORD: %s]\n", list->value);
 		}
 		else
-		{
 			printf("[%s]\n", get_token_type(list->type));
-		}
 		list = list->next;
 	}
 }
@@ -68,10 +66,10 @@ void	print_ast(t_ast *node, int depth)
 		i = 0;
 		while (node->argv && node->argv[i])
 		{
-			printf("%s", node->argv[i]);
+			printf("%s ", node->argv[i]);
 			i++;
 		}
-		printf ("\n");
+		printf("\n");
 	}
 	else if (node->type == NODE_PIPE)
 		printf("PIPE\n");
@@ -79,6 +77,20 @@ void	print_ast(t_ast *node, int depth)
 		printf("REDIR (%d) -> %s\n", node->redir_type, node->file);
 	print_ast(node->left, depth + 1);
 	print_ast(node->right, depth + 1);
+}
+
+static int	is_blank_input(char *input)
+{
+	int	i;
+
+	i = 0;
+	while (input[i])
+	{
+		if (input[i] != ' ' && input[i] != '\t')
+			return (0);
+		i++;
+	}
+	return (1);
 }
 
 static void	init_shell(t_shell *shell, char **envp)
@@ -89,12 +101,50 @@ static void	init_shell(t_shell *shell, char **envp)
 	shell->env = env_init(envp);
 }
 
+static void	clean_iteration(t_shell *shell, char *input)
+{
+	free_ast(shell->ast);
+	free_tokens(shell->lex);
+	shell->ast = NULL;
+	shell->lex = NULL;
+	free(input);
+}
+
+static void	process_input(t_shell *shell, char *input)
+{
+	t_token	*tmp;
+
+	if (is_blank_input(input))
+	{
+		free(input);
+		return ;
+	}
+	add_history(input);
+	shell->lex = lexer(input);
+	if (!shell->lex)
+	{
+		shell->last_exit_code = 2;
+		clean_iteration(shell, input);
+		return ;
+	}
+	tmp = shell->lex;
+	shell->ast = parse_pipeline(&tmp);
+	if (!shell->ast)
+	{
+		shell->last_exit_code = 2;
+		clean_iteration(shell, input);
+		return ;
+	}
+	start_execution_signals();
+	execute(shell);
+	start_interactive_signals();
+	clean_iteration(shell, input);
+}
+
 int	main(int ac, char **av, char **envp)
 {
 	char	*input;
 	t_shell	*shell;
-	t_token	*token_head;
-	t_token	*tmp;
 
 	(void)ac;
 	(void)av;
@@ -105,32 +155,15 @@ int	main(int ac, char **av, char **envp)
 	start_interactive_signals();
 	while (1)
 	{
-		shell->lex = NULL;
-		shell->ast = NULL;
 		input = readline("minishell$ ");
 		if (!input)
 		{
 			printf("exit\n");
 			break ;
 		}
-		if (*input)
-			add_history(input);
-		token_head = lexer(input);
-		shell->lex = token_head;
-		if (token_head)
-		{
-			tmp = token_head;
-			shell->ast = parse_pipeline(&tmp);
-		}
-		start_execution_signals();
-		execute(shell);
-		start_interactive_signals();
-		free_ast(shell->ast);
-		free_tokens(shell->lex);
-		shell->ast = NULL;
-		shell->lex = NULL;
-		free(input);
+		process_input(shell, input);
 	}
+	env_free(&shell->env);
 	free(shell);
 	return (0);
 }
