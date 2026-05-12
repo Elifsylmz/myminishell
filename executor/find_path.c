@@ -1,39 +1,38 @@
 #include "executor.h"
 
-char	**find_path(char **envp)
+char    **find_path(char **envp)
 {
-	int		i;
+    int     i;
 
-	i = 0;
-	while (envp[i])
-	{
-		if (ft_strncmp(envp[i], "PATH=", 5) == 0)
-			return (ft_split(envp[i] + 5, ':'));
-		i++;
-	}
-	return (NULL);
+    i = 0;
+    while (envp && envp[i])
+    {
+        if (ft_strncmp(envp[i], "PATH=", 5) == 0)
+            return (ft_split(envp[i] + 5, ':'));
+        i++;
+    }
+    return (NULL);
 }
 
-char	*find_cmd_path(char **paths, char *cmd)
+char    *find_cmd_path(char **paths, char *cmd)
 {
-	int		i;
-	char	*tmp;
-	char	*full_path;
+    int     i;
+    char    *tmp;
+    char    *full_path;
 
-	if (!cmd || !paths)
-		return (NULL);
-	if (ft_strchr(cmd, '/') && access(cmd, X_OK) == 0)
-		return (ft_strdup(cmd));
-	i = 0;
-	while (paths[i])
-	{
-		tmp = ft_strjoin(paths[i], "/");
-		full_path = ft_strjoin(tmp, cmd);
-		free(tmp);
-		if (access(full_path, X_OK) == 0)
-			return (full_path);
-		free(full_path);
-		i++;
-	}
-	return (NULL);
+    if (!cmd) return (NULL);
+    if (ft_strchr(cmd, '/') && access(cmd, X_OK) == 0)
+        return (ft_strdup(cmd));
+    if (!paths) return (NULL);
+    i = -1;
+    while (paths[++i])
+    {
+        tmp = ft_strjoin(paths[i], "/");
+        full_path = ft_strjoin(tmp, cmd);
+        free(tmp);
+        if (access(full_path, X_OK) == 0)
+            return (full_path);
+        free(full_path);
+    }
+    return (NULL);
 }

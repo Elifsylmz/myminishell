@@ -13,7 +13,8 @@ SRCS		= main.c signals.c \
 			  executor/builtins/exit.c executor/builtins/export.c \
 			  executor/builtins/pwd.c executor/builtins/unset.c \
 			  executor/expander/expander_str.c executor/expander/expander.c\
-			  lexer/lexer_utils.c lexer/lexer_word.c lexer/lexer.c 
+			  lexer/lexer_utils.c lexer/lexer_word.c lexer/lexer.c \
+			  parser/parser.c parser/parser_utils.c
 
 OBJS		= $(SRCS:.c=.o)
 
@@ -37,7 +38,7 @@ clean:
 
 fclean: clean
 		$(MAKE) -C $(LIBFT_DIR) fclean
-		rm -f $(OBJS)
+		rm -f $(NAME)
 
 re: fclean all
 

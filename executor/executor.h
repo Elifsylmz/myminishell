@@ -14,8 +14,11 @@
 # include <fcntl.h>
 # include <readline/readline.h>
 
-char	**find_path(char **envp);
-char	*find_cmd_path(char **paths, char *cmd);
-void	execute(t_shell *shell);
+char    **find_path(char **envp);
+char    *find_cmd_path(char **paths, char *cmd);
+void    execute(t_shell *shell);
+int     apply_redirections(t_ast *node);
+t_ast   *get_cmd(t_ast *node);
+void    exec_cmd(t_ast *node, t_shell *shell);
 
 #endif

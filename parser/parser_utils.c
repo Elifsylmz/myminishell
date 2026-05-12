@@ -1,5 +1,45 @@
 #include "ast.h"
 
+static  void free_arg_segments(t_segment **arg_segments)
+{
+    int i;
+
+    if(!arg_segments)
+        return ;
+    i = 0;
+    while (arg_segments[i])
+    {
+        free_segments(arg_segments[i]);
+        i++;
+    }
+    free(arg_segments);
+}
+
+t_segment   *dup_segments(t_segment *src)
+{
+    t_segment   *new_list;
+    t_segment   *new_seg;
+    char        *value;
+
+    new_list = NULL;
+    while (src)
+    {
+        value = ft_strdup(src->value);
+        if (!value)
+            return (free_segments(new_list), NULL);
+        new_seg = new_segment(value, src->quote);
+        if(!new_seg)
+        {
+            free(value);
+            free_segments(new_list);
+            return (NULL);
+        }
+        add_segment(&new_list, new_seg);
+        src = src->next;
+    }
+    return (new_list);
+}
+
 void    free_ast(t_ast *node)
 {
     int i;
@@ -12,10 +52,14 @@ void    free_ast(t_ast *node)
     {
         i = 0;
         while (node->argv[i])
-            free(node->argv[i++]);
+        {
+            free(node->argv[i]);
+            i++;
+        }
         free(node->argv);
     }
-    free(node->arg_segments);
+    free_arg_segments(node->arg_segments);
+    free_segments(node->file_segments);
     free(node->file);
     free(node);
 }
@@ -30,7 +74,9 @@ t_ast   *new_node(t_node_type type)
     node->type = type;
     node->argv = NULL;
     node->arg_segments = NULL;
+    node->redir_type = 0;
     node->file = NULL;
+    node->file_segments = NULL;
     node->left = NULL;
     node->right = NULL;
     return (node);
