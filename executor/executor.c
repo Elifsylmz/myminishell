@@ -69,18 +69,21 @@ static void	exec_pipe(t_ast *node, t_shell *shell)
 
 static void	execute_builtin(t_shell *shell, t_ast *cmd)
 {
-	int	saved_std[2];
+	int	saved_std[3];
 
 	saved_std[0] = dup(STDIN_FILENO);
 	saved_std[1] = dup(STDOUT_FILENO);
+	saved_std[2] = dup(STDERR_FILENO);
 	if (apply_redirections(shell->ast) == 0)
 		shell->last_exit_code = run_builtin(shell, cmd->argv);
 	else
 		shell->last_exit_code = 1;
 	dup2(saved_std[0], STDIN_FILENO);
 	dup2(saved_std[1], STDOUT_FILENO);
+	dup2(saved_std[2], STDERR_FILENO);
 	close(saved_std[0]);
 	close(saved_std[1]);
+	close(saved_std[2]);
 }
 
 static void	execute_external(t_shell *shell)

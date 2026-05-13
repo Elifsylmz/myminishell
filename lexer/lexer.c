@@ -25,6 +25,43 @@ static t_token	*handle_redirect(char *str, int *i)
 	return (NULL);
 }
 
+static int	is_fd_redir(char *str, int i)
+{
+	if (!ft_isdigit(str[i]))
+		return (0);
+	while (ft_isdigit(str[i]))
+		i++;
+	if (str[i] == '<' || str[i] == '>')
+		return (1);
+	return (0);
+}
+
+static int	get_fd_number(char *str, int *i)
+{
+	int	fd;
+
+	fd = 0;
+	while (ft_isdigit(str[*i]))
+	{
+		fd = fd * 10 + str[*i] - '0';
+		(*i)++;
+	}
+	return (fd);
+}
+
+static t_token	*handle_fd_redirect(char *str, int *i)
+{
+	t_token	*tok;
+	int		fd;
+
+	fd = get_fd_number(str, i);
+	tok = handle_redirect(str, i);
+	if (!tok)
+		return (NULL);
+	tok->redir_fd = fd;
+	return (tok);
+}
+
 t_token	*lexer(char *prompt)
 {
 	int			i;
@@ -45,6 +82,11 @@ t_token	*lexer(char *prompt)
 		{
 			add_token(&list, new_token(ft_strdup("|"), T_PIPE, Q_NONE));
 			i++;
+		}
+		else if (is_fd_redir(prompt, i))
+		{
+			tok = handle_fd_redirect(prompt, &i);
+			add_token(&list, tok);
 		}
 		else if (prompt[i] == '<' || prompt[i] == '>')
 		{

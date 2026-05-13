@@ -39,19 +39,20 @@ void    free_segments(t_segment *list)
     }
 }
 
-t_token *new_token(char *value, t_token_type type, t_quote_type quote)
+t_token	*new_token(char *value, t_token_type type, t_quote_type quote)
 {
-    t_token *tok;
+	t_token	*tok;
 
-    tok = malloc(sizeof(t_token));
-    if (!tok)
-        return (NULL);
-    tok->value = value;
-    tok->type = type;
-    tok->quote = quote;
-    tok->segments = NULL;
-    tok->next = NULL;
-    return (tok);
+	tok = malloc(sizeof(t_token));
+	if (!tok)
+		return (NULL);
+	tok->value = value;
+	tok->type = type;
+	tok->quote = quote;
+	tok->segments = NULL;
+	tok->redir_fd = -1;
+	tok->next = NULL;
+	return (tok);
 }
 
 void    add_token(t_token **list, t_token *newtkn)

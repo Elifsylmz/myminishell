@@ -31,12 +31,13 @@ typedef struct s_segment
 
 typedef struct s_token
 {
-    char            *value;
-    t_token_type    type;
-    t_quote_type    quote;
-    t_segment       *segments;
-    struct s_token  *next;
-}                   t_token;
+	char			*value;
+	t_token_type	type;
+	t_quote_type	quote;
+	t_segment		*segments;
+	int				redir_fd;
+	struct s_token	*next;
+}					t_token;
 
 t_token     *lexer(char *prompt);
 

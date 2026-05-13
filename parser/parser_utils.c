@@ -1,5 +1,4 @@
 #include "ast.h"
-#include <unistd.h>
 
 static void	remove_heredoc_file(t_ast *node)
 {
@@ -89,6 +88,7 @@ t_ast	*new_node(t_node_type type)
 	node->argv = NULL;
 	node->arg_segments = NULL;
 	node->redir_type = 0;
+	node->redir_fd = -1;
 	node->file = NULL;
 	node->file_segments = NULL;
 	node->left = NULL;

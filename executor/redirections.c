@@ -1,16 +1,27 @@
 #include "executor.h"
 
+static int	get_redir_fd(t_ast *node)
+{
+	if (node->redir_fd != -1)
+		return (node->redir_fd);
+	if (node->redir_type == T_REDIRECT_IN || node->redir_type == T_HEREDOC)
+		return (STDIN_FILENO);
+	return (STDOUT_FILENO);
+}
+
 static int	apply_input_redirection(t_ast *node)
 {
 	int	fd;
+	int	target_fd;
 
+	target_fd = get_redir_fd(node);
 	fd = open(node->file, O_RDONLY);
 	if (fd < 0)
 	{
 		perror(node->file);
 		return (1);
 	}
-	if (dup2(fd, STDIN_FILENO) == -1)
+	if (dup2(fd, target_fd) == -1)
 	{
 		perror("dup2");
 		close(fd);
@@ -23,7 +34,9 @@ static int	apply_input_redirection(t_ast *node)
 static int	apply_output_redirection(t_ast *node)
 {
 	int	fd;
+	int	target_fd;
 
+	target_fd = get_redir_fd(node);
 	if (node->redir_type == T_REDIRECT_OUT)
 		fd = open(node->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	else
@@ -33,7 +46,7 @@ static int	apply_output_redirection(t_ast *node)
 		perror(node->file);
 		return (1);
 	}
-	if (dup2(fd, STDOUT_FILENO) == -1)
+	if (dup2(fd, target_fd) == -1)
 	{
 		perror("dup2");
 		close(fd);

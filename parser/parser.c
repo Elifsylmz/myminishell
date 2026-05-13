@@ -1,5 +1,11 @@
 #include "ast.h"
 
+static int	default_redir_fd(t_token_type type)
+{
+	if (type == T_REDIRECT_IN || type == T_HEREDOC)
+		return (STDIN_FILENO);
+	return (STDOUT_FILENO);
+}
 
 static int	is_redir(t_token_type type)
 {
@@ -40,6 +46,9 @@ static t_ast	*add_redir(t_ast *root, t_token **tokens)
 	if (!redir)
 		return (NULL);
 	redir->redir_type = (*tokens)->type;
+	redir->redir_fd = (*tokens)->redir_fd;
+	if (redir->redir_fd == -1)
+		redir->redir_fd = default_redir_fd(redir->redir_type);
 	*tokens = (*tokens)->next;
 	if (!*tokens || (*tokens)->type != T_WORD)
 	{

@@ -4,6 +4,7 @@
 # include "../lexer/lexer.h"
 # include "../libft/libft.h"
 # include <stdlib.h>
+#include <unistd.h>
 
 typedef enum e_node_type
 {
@@ -14,15 +15,16 @@ typedef enum e_node_type
 
 typedef struct s_ast
 {
-    t_node_type     type;
-    char            **argv;
-    t_segment       **arg_segments;
-    t_token_type    redir_type;
-    char            *file;
-    t_segment       *file_segments;
-    struct s_ast    *left;
-    struct s_ast    *right;
-}                   t_ast;
+	t_node_type		type;
+	char			**argv;
+	t_segment		**arg_segments;
+	t_token_type	redir_type;
+	int				redir_fd;
+	char			*file;
+	t_segment		*file_segments;
+	struct s_ast	*left;
+	struct s_ast	*right;
+}					t_ast;
 
 t_ast   *parse_pipeline(t_token **tokens);
 void    free_ast(t_ast *node);
