@@ -20,5 +20,6 @@ void    execute(t_shell *shell);
 int     apply_redirections(t_ast *node);
 t_ast   *get_cmd(t_ast *node);
 void    exec_cmd(t_ast *node, t_shell *shell);
+void    child_cleanup(t_shell *shell);
 
 #endif

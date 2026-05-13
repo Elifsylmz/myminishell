@@ -8,12 +8,21 @@ static void	update_exit_status(t_shell *shell, int status)
 		shell->last_exit_code = 128 + WTERMSIG(status);
 }
 
+void	child_cleanup(t_shell *shell)
+{
+	free_tokens(shell->lex);
+	free_ast(shell->ast);
+	env_free(&shell->env);
+	free(shell);
+}
+
 static void	exec_pipe(t_ast *node, t_shell *shell)
 {
 	int		fd[2];
 	pid_t	left_pid;
 	pid_t	right_pid;
 	int		status;
+	int		code;
 
 	if (pipe(fd) == -1)
 		return (perror("pipe"));
@@ -26,7 +35,10 @@ static void	exec_pipe(t_ast *node, t_shell *shell)
 		close(fd[1]);
 		shell->ast = node->left;
 		execute(shell);
-		exit(shell->last_exit_code);
+		code = shell->last_exit_code;
+		shell->ast = node;
+		child_cleanup(shell);
+		exit(code);
 	}
 	right_pid = fork();
 	if (right_pid == 0)
@@ -37,7 +49,10 @@ static void	exec_pipe(t_ast *node, t_shell *shell)
 		close(fd[0]);
 		shell->ast = node->right;
 		execute(shell);
-		exit(shell->last_exit_code);
+		code = shell->last_exit_code;
+		shell->ast = node;
+		child_cleanup(shell);
+		exit(code);
 	}
 	close(fd[0]);
 	close(fd[1]);
