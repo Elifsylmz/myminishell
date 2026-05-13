@@ -63,6 +63,7 @@ static t_ast	*parse_command(t_token **tokens)
 {
 	t_ast	*cmd;
 	t_ast	*root;
+	t_ast	*tmp;
 	int		i;
 	int		words;
 
@@ -70,8 +71,8 @@ static t_ast	*parse_command(t_token **tokens)
 	cmd = new_node(NODE_CMD);
 	if (!cmd)
 		return (NULL);
-	cmd->argv = malloc(sizeof(char *) * (words + 1));
-	cmd->arg_segments = malloc(sizeof(t_segment *) * (words + 1));
+	cmd->argv = ft_calloc(words + 1, sizeof(char *));
+	cmd->arg_segments = ft_calloc(words + 1, sizeof(t_segment *));
 	if (!cmd->argv || !cmd->arg_segments)
 		return (free_ast(cmd), NULL);
 	i = 0;
@@ -85,9 +86,10 @@ static t_ast	*parse_command(t_token **tokens)
 		}
 		else if (is_redir((*tokens)->type))
 		{
-			root = add_redir(root, tokens);
-			if (!root)
-				return (free_ast(cmd), NULL);
+			tmp = add_redir(root, tokens);
+			if (!tmp)
+				return (free_ast(root), NULL);
+			root = tmp;
 		}
 		else
 			return (free_ast(root), NULL);
