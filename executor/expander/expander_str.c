@@ -1,6 +1,6 @@
 #include "expander.h"
 
-static char *expand_var(t_shell *shell, char *str, int *i)
+static char	*expand_var(t_shell *shell, char *str, int *i)
 {
     int     start;
     char    *key;
@@ -50,7 +50,6 @@ char *expand_str(t_shell *shell, char *str)
         if (str[i] == '$')
         {
             i++;
-            // Eğer string sonunda bir $ kaldıysa onu ekle
             if (!str[i])
                 part = ft_strdup("$");
             else

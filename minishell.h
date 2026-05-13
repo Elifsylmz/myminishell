@@ -11,8 +11,9 @@
 # include "libft/libft.h"
 # include "env/env.h"
 # include "parser/ast.h"
+# include <signal.h>
 
-extern int g_signal;
+extern volatile sig_atomic_t	g_signal;
 
 void	start_interactive_signals(void);
 void	start_execution_signals(void);

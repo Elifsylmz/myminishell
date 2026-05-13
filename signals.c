@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <readline/readline.h>
 
-int	g_signal = 0;
+volatile sig_atomic_t	g_signal = 0;
 
 void	handle_sigint(int sig)
 {

@@ -156,9 +156,14 @@ int	main(int ac, char **av, char **envp)
 	while (1)
 	{
 		input = readline("minishell$ ");
+		if (g_signal == SIGINT)
+		{
+			shell->last_exit_code = 130;
+			g_signal = 0;
+		}
 		if (!input)
 		{
-			printf("exit\n");
+			ft_putstr_fd("exit\n", 1);
 			break ;
 		}
 		process_input(shell, input);

@@ -56,7 +56,7 @@ t_token	*lexer(char *prompt)
 			segs = extract_word(prompt, &i);
 			if (!segs)
 			{
-				printf("minishell: syntax error: unclosed quote\n");
+				ft_putstr_fd("minishell: syntax error: unclosed quote\n", 2);
 				free_tokens(list);
 				return (NULL);
 			}
