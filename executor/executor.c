@@ -5,7 +5,13 @@ static void	update_exit_status(t_shell *shell, int status)
 	if (WIFEXITED(status))
 		shell->last_exit_code = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))
+	{
 		shell->last_exit_code = 128 + WTERMSIG(status);
+		if (WTERMSIG(status) == SIGINT)
+			printf("\n");
+		else if (WTERMSIG(status) == SIGQUIT)
+			printf("Quit (core dumped)\n");
+	}
 }
 
 void	child_cleanup(t_shell *shell)
@@ -83,6 +89,12 @@ static void	execute_external(t_shell *shell)
 	int		status;
 
 	pid = fork();
+	if (pid == -1)
+	{
+		perror("fork");
+		shell->last_exit_code = 1;
+		return ;
+	}
 	if (pid == 0)
 	{
 		set_child_signals();

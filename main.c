@@ -1,6 +1,6 @@
+#include "executor/executor.h"
 #include "minishell.h"
 #include "parser/ast.h"
-#include "executor/executor.h"
 #include <readline/history.h>
 #include <readline/readline.h>
 
@@ -113,6 +113,7 @@ static void	clean_iteration(t_shell *shell, char *input)
 static void	process_input(t_shell *shell, char *input)
 {
 	t_token	*tmp;
+	int		heredoc_counter;
 
 	if (is_blank_input(input))
 	{
@@ -135,6 +136,14 @@ static void	process_input(t_shell *shell, char *input)
 		clean_iteration(shell, input);
 		return ;
 	}
+	heredoc_counter = 0;
+	if (process_heredocs(shell->ast, &heredoc_counter) != 0)
+	{
+		shell->last_exit_code = 130;
+		start_interactive_signals();
+		clean_iteration(shell, input);
+		return ;
+	}
 	start_execution_signals();
 	execute(shell);
 	start_interactive_signals();
@@ -143,8 +152,8 @@ static void	process_input(t_shell *shell, char *input)
 
 int	main(int ac, char **av, char **envp)
 {
-	char	*input;
-	t_shell	*shell;
+	char *input;
+	t_shell *shell;
 
 	(void)ac;
 	(void)av;
@@ -156,14 +165,14 @@ int	main(int ac, char **av, char **envp)
 	while (1)
 	{
 		input = readline("minishell$ ");
-		if (g_signal == SIGINT)
+		if (g_signal != 0)
 		{
-			shell->last_exit_code = 130;
+			shell->last_exit_code = 128 + g_signal;
 			g_signal = 0;
 		}
 		if (!input)
 		{
-			ft_putstr_fd("exit\n", 1);
+			printf("exit\n");
 			break ;
 		}
 		process_input(shell, input);
