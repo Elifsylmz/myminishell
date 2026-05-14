@@ -15,5 +15,6 @@ int	builtin_export(t_shell *shell, char **argv);
 int	builtin_unset(t_shell *shell, char **argv);
 int	builtin_exit(t_shell *shell, char **argv);
 int	builtin_pwd(t_shell *shell, char **argv);
+int	print_export(t_env *env);
 
 #endif

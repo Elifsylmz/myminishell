@@ -12,7 +12,7 @@ SRCS		= main.c signals.c \
 			  executor/builtins/builtins.c executor/builtins/cd.c \
 			  executor/builtins/echo.c executor/builtins/env_builtin.c \
 			  executor/builtins/exit.c executor/builtins/export.c \
-			  executor/builtins/pwd.c executor/builtins/unset.c \
+			  executor/builtins/pwd.c executor/builtins/unset.c executor/builtins/export_print.c\
 			  executor/expander/expander_str.c executor/expander/expander.c\
 			  lexer/lexer_utils.c lexer/lexer_word.c lexer/lexer.c \
 			  parser/parser.c parser/parser_utils.c
