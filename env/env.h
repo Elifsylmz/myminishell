@@ -19,4 +19,7 @@ void	env_unset(t_env **env, char *key);
 char	**env_to_array(t_env *env);
 void	env_free(t_env **env);
 
+t_env	*env_new_node(char *key, char *value, int has_value);
+void	env_append_node(t_env **env, t_env *node);
+
 #endif

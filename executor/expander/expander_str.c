@@ -45,6 +45,8 @@ char *expand_str(t_shell *shell, char *str)
             tmp = ft_strjoin(result, part);
             free(result);
             free(part);
+            if (!tmp)
+                return (NULL);
             result = tmp;
         }
         if (str[i] == '$')
@@ -57,6 +59,8 @@ char *expand_str(t_shell *shell, char *str)
             tmp = ft_strjoin(result, part);
             free(result);
             free(part);
+            if (!tmp)
+                return (NULL);
             result = tmp;
         }
     }

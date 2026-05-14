@@ -5,6 +5,8 @@ t_segment   *new_segment(char *value, t_quote_type quote)
     t_segment   *seg;
 
     seg = malloc(sizeof(t_segment));
+    if (!seg)
+        return (NULL);
     seg->value = value;
     seg->quote = quote;
     seg->next = NULL;

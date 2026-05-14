@@ -26,35 +26,29 @@ void	env_set(t_env **env, char *key, char *value)
 {
 	t_env	*node;
 	t_env	*tmp;
+	char	*new_value;
 
+	if (!value)
+		value = "";
 	tmp = *env;
 	while (tmp)
 	{
 		if (key_equals(tmp->key, key))
 		{
+			new_value = ft_strdup(value);
+			if (!new_value)
+				return ;
 			free(tmp->value);
-			tmp->value = ft_strdup(value);
+			tmp->value = new_value;
 			tmp->has_value = 1;
 			return ;
 		}
 		tmp = tmp->next;
 	}
-	node = malloc(sizeof(t_env));
+	node = env_new_node(key, value, 1);
 	if (!node)
 		return ;
-	node->key = ft_strdup(key);
-	node->value = ft_strdup(value);
-	node->has_value = 1;
-	node->next = NULL;
-	if (!*env)
-		*env = node;
-	else
-	{
-		tmp = *env;
-		while (tmp->next)
-			tmp = tmp->next;
-		tmp->next = node;
-	}
+	env_append_node(env, node);
 }
 
 void	env_export_key(t_env **env, char *key)
@@ -69,22 +63,10 @@ void	env_export_key(t_env **env, char *key)
 			return ;
 		tmp = tmp->next;
 	}
-	node = malloc(sizeof(t_env));
+	node = env_new_node(key, NULL, 0);
 	if (!node)
 		return ;
-	node->key = ft_strdup(key);
-	node->value = NULL;
-	node->has_value = 0;
-	node->next = NULL;
-	if (!*env)
-		*env = node;
-	else
-	{
-		tmp = *env;
-		while (tmp->next)
-			tmp = tmp->next;
-		tmp->next = node;
-	}
+	env_append_node(env, node);
 }
 
 void	env_unset(t_env **env, char *key)

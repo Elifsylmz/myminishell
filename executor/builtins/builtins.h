@@ -4,6 +4,8 @@
 # include "../../types.h"
 # include "../../minishell.h"
 # include <stdio.h>
+# include <limits.h>
+
 
 int	is_builtin(char *cmd);
 int	run_builtin(t_shell *shell, char **argv);

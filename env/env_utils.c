@@ -14,19 +14,29 @@ static int	count_env_values(t_env *env)
 	return (count);
 }
 
+static char	*join_env_value(t_env *env)
+{
+	char	*tmp;
+	char	*result;
+
+	tmp = ft_strjoin(env->key, "=");
+	if (!tmp)
+		return (NULL);
+	result = ft_strjoin(tmp, env->value);
+	free(tmp);
+	return (result);
+}
+
 static void	fill_env_array(char **arr, t_env *env)
 {
-	char	*tmp_str;
-	int		i;
+	int	i;
 
 	i = 0;
 	while (env)
 	{
 		if (env->has_value)
 		{
-			tmp_str = ft_strjoin(env->key, "=");
-			arr[i] = ft_strjoin(tmp_str, env->value);
-			free(tmp_str);
+			arr[i] = join_env_value(env);
 			i++;
 		}
 		env = env->next;

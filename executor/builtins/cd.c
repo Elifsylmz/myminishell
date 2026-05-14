@@ -2,30 +2,33 @@
 
 static char	*join_home_path(char *home, char *arg)
 {
-	char	*path;
-
 	if (!home)
 		return (NULL);
 	if (arg[1] == '\0')
 		return (ft_strdup(home));
-	path = ft_strjoin(home, arg + 1);
+	return (ft_strjoin(home, arg + 1));
+}
+
+static char	*get_oldpwd_path(t_shell *shell)
+{
+	char	*path;
+
+	path = env_get(shell->env, "OLDPWD");
+	if (path)
+	{
+		ft_putstr_fd(path, 1);
+		ft_putstr_fd("\n", 1);
+	}
 	return (path);
 }
 
 static char	*get_cd_path(t_shell *shell, char **argv, int *need_free)
 {
-	char	*path;
-
 	*need_free = 0;
 	if (!argv[1])
 		return (env_get(shell->env, "HOME"));
 	if (ft_strncmp(argv[1], "-", 2) == 0)
-	{
-		path = env_get(shell->env, "OLDPWD");
-		if (path)
-			printf("%s\n", path);
-		return (path);
-	}
+		return (get_oldpwd_path(shell));
 	if (argv[1][0] == '~' && (argv[1][1] == '\0' || argv[1][1] == '/'))
 	{
 		*need_free = 1;
@@ -34,11 +37,19 @@ static char	*get_cd_path(t_shell *shell, char **argv, int *need_free)
 	return (argv[1]);
 }
 
+static void	print_cd_path_error(char **argv)
+{
+	if (argv[1] && ft_strncmp(argv[1], "-", 2) == 0)
+		ft_putstr_fd("minishell: cd: OLDPWD not set\n", 2);
+	else
+		ft_putstr_fd("minishell: cd: HOME not set\n", 2);
+}
+
 int	builtin_cd(t_shell *shell, char **argv)
 {
 	char	*path;
 	char	*oldpwd;
-	char	cwd[1024];
+	char	cwd[PATH_MAX];
 	int		need_free;
 
 	if (argv[1] && argv[2])
@@ -50,7 +61,7 @@ int	builtin_cd(t_shell *shell, char **argv)
 	path = get_cd_path(shell, argv, &need_free);
 	if (!path)
 	{
-		ft_putstr_fd("minishell: cd: HOME not set\n", 2);
+		print_cd_path_error(argv);
 		return (1);
 	}
 	if (chdir(path) != 0)

@@ -4,81 +4,6 @@
 #include <readline/history.h>
 #include <readline/readline.h>
 
-const char	*get_token_type(t_token_type type)
-{
-	if (type == T_WORD)
-		return ("WORD");
-	else if (type == T_PIPE)
-		return ("PIPE");
-	else if (type == T_REDIRECT_IN)
-		return ("REDIRECT_IN");
-	else if (type == T_REDIRECT_OUT)
-		return ("REDIRECT_OUT");
-	else if (type == T_APPEND)
-		return ("APPEND");
-	else if (type == T_HEREDOC)
-		return ("HEREDOC");
-	return ("UNKNOWN");
-}
-
-const char	*get_quote_type(t_quote_type quote)
-{
-	if (quote == Q_SINGLE)
-		return ("Q_SINGLE");
-	else if (quote == Q_DOUBLE)
-		return ("Q_DOUBLE");
-	return ("Q_NONE");
-}
-
-void	print_tokens(t_token *list)
-{
-	while (list)
-	{
-		if (list->type == T_WORD)
-		{
-			if (list->quote != Q_NONE)
-				printf("[WORD: %s, %s]\n", list->value,
-					get_quote_type(list->quote));
-			else
-				printf("[WORD: %s]\n", list->value);
-		}
-		else
-			printf("[%s]\n", get_token_type(list->type));
-		list = list->next;
-	}
-}
-
-void	print_ast(t_ast *node, int depth)
-{
-	int	i;
-
-	if (!node)
-		return ;
-	i = 0;
-	while (i < depth)
-	{
-		printf(" ");
-		i++;
-	}
-	if (node->type == NODE_CMD)
-	{
-		printf("CMD: ");
-		i = 0;
-		while (node->argv && node->argv[i])
-		{
-			printf("%s ", node->argv[i]);
-			i++;
-		}
-		printf("\n");
-	}
-	else if (node->type == NODE_PIPE)
-		printf("PIPE\n");
-	else if (node->type == NODE_REDIR)
-		printf("REDIR (%d) -> %s\n", node->redir_type, node->file);
-	print_ast(node->left, depth + 1);
-	print_ast(node->right, depth + 1);
-}
-
 static int	is_blank_input(char *input)
 {
 	int	i;
@@ -110,10 +35,29 @@ static void	clean_iteration(t_shell *shell, char *input)
 	free(input);
 }
 
+static int	build_ast(t_shell *shell, char *input)
+{
+	t_token	*cursor;
+
+	shell->lex = lexer(input);
+	if (!shell->lex)
+	{
+		shell->last_exit_code = 2;
+		return (1);
+	}
+	cursor = shell->lex;
+	shell->ast = parse_pipeline(&cursor);
+	if (!shell->ast)
+	{
+		shell->last_exit_code = 2;
+		return (1);
+	}
+	return (0);
+}
+
 static void	process_input(t_shell *shell, char *input)
 {
-	t_token	*tmp;
-	int		heredoc_counter;
+	int	heredoc_counter;
 
 	if (is_blank_input(input))
 	{
@@ -121,23 +65,14 @@ static void	process_input(t_shell *shell, char *input)
 		return ;
 	}
 	add_history(input);
-	shell->lex = lexer(input);
-	if (!shell->lex)
+	if (build_ast(shell, input) != 0)
 	{
-		shell->last_exit_code = 2;
-		clean_iteration(shell, input);
-		return ;
-	}
-	tmp = shell->lex;
-	shell->ast = parse_pipeline(&tmp);
-	if (!shell->ast)
-	{
-		shell->last_exit_code = 2;
 		clean_iteration(shell, input);
 		return ;
 	}
 	heredoc_counter = 0;
-	if (process_heredocs(shell, shell->ast, &heredoc_counter) != 0)	{
+	if (process_heredocs(shell, shell->ast, &heredoc_counter) != 0)
+	{
 		shell->last_exit_code = 130;
 		start_interactive_signals();
 		clean_iteration(shell, input);
@@ -151,8 +86,8 @@ static void	process_input(t_shell *shell, char *input)
 
 int	main(int ac, char **av, char **envp)
 {
-	char *input;
-	t_shell *shell;
+	char	*input;
+	t_shell	*shell;
 
 	(void)ac;
 	(void)av;
@@ -171,7 +106,7 @@ int	main(int ac, char **av, char **envp)
 		}
 		if (!input)
 		{
-			printf("exit\n");
+			ft_putstr_fd("exit\n", 1);
 			break ;
 		}
 		process_input(shell, input);
