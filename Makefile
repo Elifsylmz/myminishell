@@ -5,7 +5,7 @@ CFLAGS		= -Wall -Wextra -Werror -g
 INCLUDES	= -I. -Ilibft -Ienv -Ilexer -Iparser -Iexecutor
 
 SRCS		= main.c signals.c \
-			  env/env_init.c env/env_ops.c env/env_utils.c \
+			  env/env_init.c env/env_ops.c env/env_utils.c env/env_node.c \
 			  executor/exec_cmd.c executor/executor.c \
 			  executor/find_path.c executor/redirections.c \
 			  executor/heredoc.c executor/heredoc_child.c \
