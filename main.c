@@ -137,8 +137,7 @@ static void	process_input(t_shell *shell, char *input)
 		return ;
 	}
 	heredoc_counter = 0;
-	if (process_heredocs(shell->ast, &heredoc_counter) != 0)
-	{
+	if (process_heredocs(shell, shell->ast, &heredoc_counter) != 0)	{
 		shell->last_exit_code = 130;
 		start_interactive_signals();
 		clean_iteration(shell, input);

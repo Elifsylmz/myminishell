@@ -1,34 +1,5 @@
 #include "executor.h"
 
-static void	run_heredoc_child(t_ast *node, char *filename)
-{
-	int		fd;
-	char	*line;
-
-	set_heredoc_signals();
-	fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (fd < 0)
-	{
-		perror(filename);
-		exit(1);
-	}
-	while (1)
-	{
-		line = readline("> ");
-		if (!line || ft_strncmp(line, node->file,
-				ft_strlen(node->file) + 1) == 0)
-		{
-			free(line);
-			break ;
-		}
-		ft_putstr_fd(line, fd);
-		ft_putstr_fd("\n", fd);
-		free(line);
-	}
-	close(fd);
-	exit(0);
-}
-
 static int	wait_heredoc(pid_t pid, char *filename)
 {
 	int	status;
@@ -74,7 +45,7 @@ static char	*make_heredoc_name(int *counter)
 	return (filename);
 }
 
-static int	handle_heredoc_node(t_ast *node, int *counter)
+static int	handle_heredoc_node(t_shell *shell, t_ast *node, int *counter)
 {
 	pid_t	pid;
 	char	*filename;
@@ -90,7 +61,7 @@ static int	handle_heredoc_node(t_ast *node, int *counter)
 		return (1);
 	}
 	if (pid == 0)
-		run_heredoc_child(node, filename);
+		run_heredoc_child(shell, node, filename);
 	if (wait_heredoc(pid, filename) != 0)
 		return (1);
 	free(node->file);
@@ -98,15 +69,15 @@ static int	handle_heredoc_node(t_ast *node, int *counter)
 	return (0);
 }
 
-int	process_heredocs(t_ast *node, int *counter)
+int	process_heredocs(t_shell *shell, t_ast *node, int *counter)
 {
 	if (!node)
 		return (0);
-	if (process_heredocs(node->left, counter) != 0)
+	if (process_heredocs(shell, node->left, counter) != 0)
 		return (1);
-	if (process_heredocs(node->right, counter) != 0)
+	if (process_heredocs(shell, node->right, counter) != 0)
 		return (1);
 	if (node->type == NODE_REDIR && node->redir_type == T_HEREDOC)
-		return (handle_heredoc_node(node, counter));
+		return (handle_heredoc_node(shell, node, counter));
 	return (0);
 }

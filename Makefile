@@ -7,7 +7,8 @@ INCLUDES	= -I. -Ilibft -Ienv -Ilexer -Iparser -Iexecutor
 SRCS		= main.c signals.c \
 			  env/env_init.c env/env_ops.c env/env_utils.c \
 			  executor/exec_cmd.c executor/executor.c \
-			  executor/find_path.c  executor/redirections.c executor/heredoc.c \
+			  executor/find_path.c executor/redirections.c \
+			  executor/heredoc.c executor/heredoc_child.c \
 			  executor/builtins/builtins.c executor/builtins/cd.c \
 			  executor/builtins/echo.c executor/builtins/env_builtin.c \
 			  executor/builtins/exit.c executor/builtins/export.c \
