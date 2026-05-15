@@ -8,8 +8,8 @@ SRCS		= main.c signals.c main_utils.c\
 			  env/env_init.c env/env_ops.c env/env_utils.c env/env_node.c \
 			  executor/exec_cmd.c executor/executor.c \
 			  executor/find_path.c executor/redirections.c \
-			  executor/heredoc.c executor/heredoc_child.c \
-			  executor/builtins/builtins.c executor/builtins/cd.c \
+			  executor/heredoc.c executor/heredoc_child.c executor/exec_utils.c \
+			  executor/exec_check.c executor/builtins/builtins.c executor/builtins/cd.c \
 			  executor/builtins/echo.c executor/builtins/env_builtin.c \
 			  executor/builtins/exit.c executor/builtins/export.c \
 			  executor/builtins/pwd.c executor/builtins/unset.c executor/builtins/export_print.c\

@@ -24,4 +24,10 @@ t_ast	*get_cmd(t_ast *node);
 void	exec_cmd(t_ast *node, t_shell *shell);
 void	child_cleanup(t_shell *shell);
 
+void	free_array(char **arr);
+void	print_cmd_error(char *cmd, char *msg);
+void	command_not_found(char *cmd, t_shell *shell);
+int		execve_exit_code(int err);
+int		check_cmd_before_exec(t_ast *cmd);
+
 #endif
