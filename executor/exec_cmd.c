@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exec_cmd.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: eyilmaz <eyilmaz@student.42istanbul.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/05/15 21:53:26 by eyilmaz           #+#    #+#             */
+/*   Updated: 2026/05/15 22:16:55 by eyilmaz          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "executor.h"
 #include <errno.h>
 #include <string.h>
@@ -32,16 +44,16 @@ static void	prepare_cmd(t_ast *node, t_shell *shell, t_ast **cmd)
 	}
 }
 
-static char	*resolve_cmd_path(t_shell *shell, t_ast *cmd,
-	char ***envp, char ***paths)
+static char	*resolve_cmd_path(t_shell *shell, t_ast *cmd, char ***envp,
+		char ***paths)
 {
 	*envp = env_to_array(shell->env);
 	*paths = find_path(*envp);
 	return (find_cmd_path(*paths, cmd->argv[0]));
 }
 
-static void	execve_or_exit(char *cmd_path, t_ast *cmd,
-	char **envp, char **paths, t_shell *shell)
+static void	execve_or_exit(char *cmd_path, t_ast *cmd, char **envp,
+		char **paths, t_shell *shell)
 {
 	int	err;
 

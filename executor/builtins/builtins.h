@@ -1,15 +1,26 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   builtins.h                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: eyilmaz <eyilmaz@student.42istanbul.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/05/15 22:23:36 by eyilmaz           #+#    #+#             */
+/*   Updated: 2026/05/15 22:23:47 by eyilmaz          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef BUILTINS_H
 # define BUILTINS_H
 
-#ifndef PATH_MAX
-# define PATH_MAX 4096
-#endif
+# ifndef PATH_MAX
+#  define PATH_MAX 4096
+# endif
 
 # include "../../types.h"
 # include "../../minishell.h"
 # include <stdio.h>
 # include <limits.h>
-
 
 int		is_builtin(char *cmd);
 int		run_builtin(t_shell *shell, char **argv);

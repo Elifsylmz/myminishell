@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expander.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: eyilmaz <eyilmaz@student.42istanbul.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/05/15 21:53:19 by eyilmaz           #+#    #+#             */
+/*   Updated: 2026/05/15 22:18:42 by eyilmaz          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "expander.h"
 
 char	*expand_segments(t_shell *shell, t_segment *segs)
@@ -30,7 +42,7 @@ char	*expand_segments(t_shell *shell, t_segment *segs)
 
 void	expand_ast(t_shell *shell, t_ast *cmd)
 {
-	int	i;
+	int		i;
 	char	*expanded;
 
 	i = 0;

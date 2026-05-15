@@ -1,7 +1,19 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   signals.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: eyilmaz <eyilmaz@student.42istanbul.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/05/15 21:54:48 by eyilmaz           #+#    #+#             */
+/*   Updated: 2026/05/15 22:00:55 by eyilmaz          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
+#include <readline/readline.h>
 #include <signal.h>
 #include <unistd.h>
-#include <readline/readline.h>
 
 volatile sig_atomic_t	g_signal = 0;
 

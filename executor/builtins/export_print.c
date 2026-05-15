@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   export_print.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: eyilmaz <eyilmaz@student.42istanbul.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/05/15 21:53:08 by eyilmaz           #+#    #+#             */
+/*   Updated: 2026/05/15 22:24:35 by eyilmaz          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "builtins.h"
 
 static int	str_cmp(char *a, char *b)
@@ -44,8 +56,8 @@ static void	print_export_value(char *value)
 	ft_putstr_fd("=\"", 1);
 	while (value && value[i])
 	{
-		if (value[i] == '"' || value[i] == '\\'
-			|| value[i] == '$' || value[i] == '`')
+		if (value[i] == '"' || value[i] == '\\' || value[i] == '$'
+			|| value[i] == '`')
 			ft_putchar_fd('\\', 1);
 		ft_putchar_fd(value[i], 1);
 		i++;

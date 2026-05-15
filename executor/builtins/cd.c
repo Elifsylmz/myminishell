@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cd.c                                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: eyilmaz <eyilmaz@student.42istanbul.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/05/15 21:52:56 by eyilmaz           #+#    #+#             */
+/*   Updated: 2026/05/15 22:23:21 by eyilmaz          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "builtins.h"
 
 int	builtin_cd(t_shell *shell, char **argv)
@@ -14,10 +26,7 @@ int	builtin_cd(t_shell *shell, char **argv)
 	oldpwd = env_get(shell->env, "PWD");
 	path = get_cd_path(shell, argv, &need_free);
 	if (!path)
-	{
-		print_cd_path_error(argv);
-		return (1);
-	}
+		return (print_cd_path_error(argv), (1));
 	if (chdir(path) != 0)
 	{
 		perror("minishell: cd");

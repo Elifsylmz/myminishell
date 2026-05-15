@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   lexer_word.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: eyilmaz <eyilmaz@student.42istanbul.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/05/15 21:54:09 by eyilmaz           #+#    #+#             */
+/*   Updated: 2026/05/15 22:06:45 by eyilmaz          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "lexer.h"
 
 static int	is_special(char c)
@@ -39,8 +51,7 @@ static t_segment	*extract_plain_part(char *str, int *i)
 	int			start;
 
 	start = *i;
-	while (str[*i] && !is_special(str[*i])
-		&& str[*i] != '\'' && str[*i] != '"')
+	while (str[*i] && !is_special(str[*i]) && str[*i] != '\'' && str[*i] != '"')
 		(*i)++;
 	part = ft_substr(str, start, *i - start);
 	if (!part)

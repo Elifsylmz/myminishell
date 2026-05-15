@@ -1,7 +1,19 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: eyilmaz <eyilmaz@student.42istanbul.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/05/15 21:54:33 by eyilmaz           #+#    #+#             */
+/*   Updated: 2026/05/15 22:03:00 by eyilmaz          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "parser.h"
 
-static int	parse_command_token(t_ast **root, t_ast *cmd,
-	t_token **tokens, int *i)
+static int	parse_command_token(t_ast **root, t_ast *cmd, t_token **tokens,
+		int *i)
 {
 	t_ast	*tmp;
 

@@ -1,16 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   types.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: eyilmaz <eyilmaz@student.42istanbul.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/05/15 22:00:39 by eyilmaz           #+#    #+#             */
+/*   Updated: 2026/05/15 22:00:39 by eyilmaz          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef TYPES_H
 # define TYPES_H
-
-/*
-** Forward declarations — tam tanım için ilgili modül headerını include et:
-**   t_token  → lexer/lexer.h
-**   t_env    → env/env.h
-**   t_ast    → parser/ast.h
-**
-** t_shell burada tam tanımlanır çünkü executor, builtins ve expander
-** minishell.h'a circular olarak bağlanmadan t_shell'e ihtiyaç duyar.
-** Tek çözüm: t_shell'i herkesten önce, bağımsız bir dosyada tutmak.
-*/
 
 typedef struct s_token	t_token;
 typedef struct s_env	t_env;

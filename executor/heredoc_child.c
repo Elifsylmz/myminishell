@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   heredoc_child.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: eyilmaz <eyilmaz@student.42istanbul.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/05/15 21:53:38 by eyilmaz           #+#    #+#             */
+/*   Updated: 2026/05/15 22:10:35 by eyilmaz          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "executor.h"
 
 static int	is_quoted_delimiter(t_segment *segments)
@@ -46,8 +58,8 @@ void	run_heredoc_child(t_shell *shell, t_ast *node, char *filename)
 	while (1)
 	{
 		line = readline("> ");
-		if (!line || ft_strncmp(line, node->file,
-				ft_strlen(node->file) + 1) == 0)
+		if (!line || ft_strncmp(line, node->file, ft_strlen(node->file)
+				+ 1) == 0)
 		{
 			free(line);
 			break ;

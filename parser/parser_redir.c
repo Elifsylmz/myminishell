@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser_redir.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: eyilmaz <eyilmaz@student.42istanbul.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/05/15 21:54:26 by eyilmaz           #+#    #+#             */
+/*   Updated: 2026/05/15 22:03:16 by eyilmaz          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "parser.h"
 
 static int	default_redir_fd(t_token_type type)
@@ -9,8 +21,8 @@ static int	default_redir_fd(t_token_type type)
 
 int	is_redir(t_token_type type)
 {
-	return (type == T_REDIRECT_IN || type == T_REDIRECT_OUT
-		|| type == T_APPEND || type == T_HEREDOC);
+	return (type == T_REDIRECT_IN || type == T_REDIRECT_OUT || type == T_APPEND
+		|| type == T_HEREDOC);
 }
 
 static int	set_redir_file(t_ast *redir, t_token **tokens)
