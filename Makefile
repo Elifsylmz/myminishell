@@ -9,12 +9,15 @@ SRCS		= main.c signals.c main_utils.c\
 			  executor/exec_cmd.c executor/executor.c \
 			  executor/find_path.c executor/redirections.c \
 			  executor/heredoc.c executor/heredoc_child.c executor/exec_utils.c \
-			  executor/exec_check.c executor/builtins/builtins.c executor/builtins/cd.c \
+			  executor/exec_check.c executor/pipe.c \
+			  executor/builtins/builtins.c executor/builtins/cd.c \
 			  executor/builtins/echo.c executor/builtins/env_builtin.c \
 			  executor/builtins/exit.c executor/builtins/export.c \
 			  executor/builtins/pwd.c executor/builtins/unset.c executor/builtins/export_print.c\
 			  executor/expander/expander_str.c executor/expander/expander.c\
-			  lexer/lexer_utils.c lexer/lexer_word.c lexer/lexer.c \
+			  executor/builtins/exit_utils.c executor/builtins/cd_utils.c\
+			  lexer/lexer_redir.c lexer/lexer_word.c lexer/lexer.c \
+			  lexer/lexer_segment.c lexer/lexer_tokenize.c lexer/lexer_token.c\
 			  parser/parser.c parser/ast_utils.c parser/parser_redir.c \
 			  parser/parser_word.c
 

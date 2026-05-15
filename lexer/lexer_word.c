@@ -1,53 +1,74 @@
 #include "lexer.h"
 
-int	is_special(char c)
+static int	is_special(char c)
 {
 	return (c == '|' || c == '<' || c == '>' || c == ' ' || c == '\t');
 }
 
-int	is_whitespace(char c)
+static t_segment	*extract_quoted_part(char *str, int *i)
 {
-	return (c == ' ' || c == '\t');
+	t_segment	*seg;
+	char		*part;
+	char		q;
+	int			start;
+
+	q = str[*i];
+	(*i)++;
+	start = *i;
+	while (str[*i] && str[*i] != q)
+		(*i)++;
+	if (str[*i] != q)
+		return (NULL);
+	part = ft_substr(str, start, *i - start);
+	if (!part)
+		return (NULL);
+	if (q == '\'')
+		seg = new_segment(part, Q_SINGLE);
+	else
+		seg = new_segment(part, Q_DOUBLE);
+	if (!seg)
+		return (free(part), NULL);
+	(*i)++;
+	return (seg);
+}
+
+static t_segment	*extract_plain_part(char *str, int *i)
+{
+	t_segment	*seg;
+	char		*part;
+	int			start;
+
+	start = *i;
+	while (str[*i] && !is_special(str[*i])
+		&& str[*i] != '\'' && str[*i] != '"')
+		(*i)++;
+	part = ft_substr(str, start, *i - start);
+	if (!part)
+		return (NULL);
+	seg = new_segment(part, Q_NONE);
+	if (!seg)
+		return (free(part), NULL);
+	return (seg);
 }
 
 t_segment	*extract_word(char *str, int *i)
 {
 	t_segment	*segs;
-	char		*part;
-	char		q;
-	int			start;
+	t_segment	*new_seg;
 
 	segs = NULL;
 	while (str[*i] && !is_special(str[*i]))
 	{
 		if (str[*i] == '\'' || str[*i] == '"')
-		{
-			q = str[*i];
-			(*i)++;
-			start = *i;
-			while (str[*i] && str[*i] != q)
-				(*i)++;
-			if (str[*i] != q)
-			{
-				free_segments(segs);
-				return (NULL);
-			}
-			part = ft_substr(str, start, *i - start);
-			if (q == '\'')
-				add_segment(&segs, new_segment(part, Q_SINGLE));
-			else
-				add_segment(&segs, new_segment(part, Q_DOUBLE));
-			(*i)++;
-		}
+			new_seg = extract_quoted_part(str, i);
 		else
+			new_seg = extract_plain_part(str, i);
+		if (!new_seg)
 		{
-			start = *i;
-			while (str[*i] && !is_special(str[*i])
-				&& str[*i] != '\'' && str[*i] != '"')
-				(*i)++;
-			part = ft_substr(str, start, *i - start);
-			add_segment(&segs, new_segment(part, Q_NONE));
+			free_segments(segs);
+			return (NULL);
 		}
+		add_segment(&segs, new_seg);
 	}
 	return (segs);
 }
@@ -58,10 +79,14 @@ char	*segments_to_value(t_segment *segs)
 	char	*tmp;
 
 	result = ft_strdup("");
+	if (!result)
+		return (NULL);
 	while (segs)
 	{
 		tmp = ft_strjoin(result, segs->value);
 		free(result);
+		if (!tmp)
+			return (NULL);
 		result = tmp;
 		segs = segs->next;
 	}
