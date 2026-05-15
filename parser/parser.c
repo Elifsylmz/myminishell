@@ -1,106 +1,41 @@
-#include "ast.h"
+#include "parser.h"
 
-static int	default_redir_fd(t_token_type type)
+static int	parse_command_token(t_ast **root, t_ast *cmd,
+	t_token **tokens, int *i)
 {
-	if (type == T_REDIRECT_IN || type == T_HEREDOC)
-		return (STDIN_FILENO);
-	return (STDOUT_FILENO);
-}
+	t_ast	*tmp;
 
-static int	is_redir(t_token_type type)
-{
-	return (type == T_REDIRECT_IN || type == T_REDIRECT_OUT
-		|| type == T_APPEND || type == T_HEREDOC);
-}
-
-static int	count_words_until_pipe(t_token *tokens)
-{
-	int	count;
-
-	count = 0;
-	while (tokens && tokens->type != T_PIPE)
+	if ((*tokens)->type == T_WORD)
 	{
-		if (tokens->type == T_WORD)
-			count++;
-		tokens = tokens->next;
+		if (!add_word(cmd, tokens, i))
+			return (0);
 	}
-	return (count);
-}
-
-static int	add_word(t_ast *cmd, t_token **tokens, int *i)
-{
-	cmd->argv[*i] = ft_strdup((*tokens)->value);
-	cmd->arg_segments[*i] = dup_segments((*tokens)->segments);
-	if (!cmd->argv[*i] || !cmd->arg_segments[*i])
+	else if (is_redir((*tokens)->type))
+	{
+		tmp = add_redir(*root, tokens);
+		if (!tmp)
+			return (0);
+		*root = tmp;
+	}
+	else
 		return (0);
-	(*i)++;
-	*tokens = (*tokens)->next;
 	return (1);
-}
-
-static t_ast	*add_redir(t_ast *root, t_token **tokens)
-{
-	t_ast	*redir;
-
-	redir = new_node(NODE_REDIR);
-	if (!redir)
-		return (NULL);
-	redir->redir_type = (*tokens)->type;
-	redir->redir_fd = (*tokens)->redir_fd;
-	if (redir->redir_fd == -1)
-		redir->redir_fd = default_redir_fd(redir->redir_type);
-	*tokens = (*tokens)->next;
-	if (!*tokens || (*tokens)->type != T_WORD)
-	{
-		ft_putstr_fd("minishell: syntax error near redirection\n", 2);
-		free(redir);
-		return (NULL);
-	}
-	redir->file = ft_strdup((*tokens)->value);
-	redir->file_segments = dup_segments((*tokens)->segments);
-	if (!redir->file || !redir->file_segments)
-	{
-		free_ast(redir);
-		return (NULL);
-	}
-	*tokens = (*tokens)->next;
-	redir->left = root;
-	return (redir);
 }
 
 static t_ast	*parse_command(t_token **tokens)
 {
 	t_ast	*cmd;
 	t_ast	*root;
-	t_ast	*tmp;
 	int		i;
-	int		words;
 
-	words = count_words_until_pipe(*tokens);
-	cmd = new_node(NODE_CMD);
+	cmd = init_cmd_node(*tokens);
 	if (!cmd)
 		return (NULL);
-	cmd->argv = ft_calloc(words + 1, sizeof(char *));
-	cmd->arg_segments = ft_calloc(words + 1, sizeof(t_segment *));
-	if (!cmd->argv || !cmd->arg_segments)
-		return (free_ast(cmd), NULL);
-	i = 0;
 	root = cmd;
+	i = 0;
 	while (*tokens && (*tokens)->type != T_PIPE)
 	{
-		if ((*tokens)->type == T_WORD)
-		{
-			if (!add_word(cmd, tokens, &i))
-				return (free_ast(root), NULL);
-		}
-		else if (is_redir((*tokens)->type))
-		{
-			tmp = add_redir(root, tokens);
-			if (!tmp)
-				return (free_ast(root), NULL);
-			root = tmp;
-		}
-		else
+		if (!parse_command_token(&root, cmd, tokens, &i))
 			return (free_ast(root), NULL);
 	}
 	cmd->argv[i] = NULL;
@@ -108,10 +43,30 @@ static t_ast	*parse_command(t_token **tokens)
 	return (root);
 }
 
+static t_ast	*parse_next_pipe(t_ast *left, t_token **tokens)
+{
+	t_ast	*node;
+
+	*tokens = (*tokens)->next;
+	if (!*tokens || (*tokens)->type == T_PIPE)
+	{
+		ft_putstr_fd("minishell: syntax error near pipe\n", 2);
+		free_ast(left);
+		return (NULL);
+	}
+	node = new_node(NODE_PIPE);
+	if (!node)
+		return (free_ast(left), NULL);
+	node->left = left;
+	node->right = parse_command(tokens);
+	if (!node->right)
+		return (free_ast(node), NULL);
+	return (node);
+}
+
 t_ast	*parse_pipeline(t_token **tokens)
 {
 	t_ast	*left;
-	t_ast	*node;
 
 	if (!tokens || !*tokens || (*tokens)->type == T_PIPE)
 	{
@@ -123,20 +78,9 @@ t_ast	*parse_pipeline(t_token **tokens)
 		return (NULL);
 	while (*tokens && (*tokens)->type == T_PIPE)
 	{
-		*tokens = (*tokens)->next;
-		if (!*tokens || (*tokens)->type == T_PIPE)
-		{
-			ft_putstr_fd("minishell: syntax error near pipe\n", 2);
-			return (free_ast(left), NULL);
-		}
-		node = new_node(NODE_PIPE);
-		if (!node)
-			return (free_ast(left), NULL);
-		node->left = left;
-		node->right = parse_command(tokens);
-		if (!node->right)
-			return (free_ast(node), NULL);
-		left = node;
+		left = parse_next_pipe(left, tokens);
+		if (!left)
+			return (NULL);
 	}
 	return (left);
 }

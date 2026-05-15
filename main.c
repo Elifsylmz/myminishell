@@ -1,92 +1,70 @@
 #include "executor/executor.h"
 #include "minishell.h"
-#include "parser/ast.h"
 #include <readline/history.h>
 #include <readline/readline.h>
 
-static int	is_blank_input(char *input)
+static void	update_signal_status(t_shell *shell)
 {
-	int	i;
-
-	i = 0;
-	while (input[i])
+	if (g_signal != 0)
 	{
-		if (input[i] != ' ' && input[i] != '\t')
-			return (0);
-		i++;
+		shell->last_exit_code = 128 + g_signal;
+		g_signal = 0;
 	}
-	return (1);
 }
 
-static void	init_shell(t_shell *shell, char **envp)
-{
-	shell->lex = NULL;
-	shell->ast = NULL;
-	shell->last_exit_code = 0;
-	shell->env = env_init(envp);
-}
-
-static void	clean_iteration(t_shell *shell, char *input)
-{
-	free_ast(shell->ast);
-	free_tokens(shell->lex);
-	shell->ast = NULL;
-	shell->lex = NULL;
-	free(input);
-}
-
-static int	build_ast(t_shell *shell, char *input)
-{
-	t_token	*cursor;
-
-	shell->lex = lexer(input);
-	if (!shell->lex)
-	{
-		shell->last_exit_code = 2;
-		return (1);
-	}
-	cursor = shell->lex;
-	shell->ast = parse_pipeline(&cursor);
-	if (!shell->ast)
-	{
-		shell->last_exit_code = 2;
-		return (1);
-	}
-	return (0);
-}
-
-static void	process_input(t_shell *shell, char *input)
+static int	handle_heredocs(t_shell *shell, char *input)
 {
 	int	heredoc_counter;
 
-	if (is_blank_input(input))
-	{
-		free(input);
-		return ;
-	}
-	add_history(input);
-	if (build_ast(shell, input) != 0)
-	{
-		clean_iteration(shell, input);
-		return ;
-	}
 	heredoc_counter = 0;
 	if (process_heredocs(shell, shell->ast, &heredoc_counter) != 0)
 	{
 		shell->last_exit_code = 130;
 		start_interactive_signals();
 		clean_iteration(shell, input);
+		return (1);
+	}
+	return (0);
+}
+
+static void	run_command_line(t_shell *shell, char *input)
+{
+	add_history(input);
+	if (build_ast(shell, input) != 0)
+	{
+		clean_iteration(shell, input);
 		return ;
 	}
+	if (handle_heredocs(shell, input) != 0)
+		return ;
 	start_execution_signals();
 	execute(shell);
 	start_interactive_signals();
 	clean_iteration(shell, input);
 }
 
-int	main(int ac, char **av, char **envp)
+static int	read_input(t_shell *shell)
 {
 	char	*input;
+
+	input = readline("minishell$ ");
+	update_signal_status(shell);
+	if (!input)
+	{
+		ft_putstr_fd("exit\n", 1);
+		return (0);
+	}
+	if (is_blank_input(input))
+	{
+		free(input);
+		return (1);
+	}
+	run_command_line(shell, input);
+	return (1);
+}
+
+int	main(int ac, char **av, char **envp)
+{
 	t_shell	*shell;
 
 	(void)ac;
@@ -96,21 +74,8 @@ int	main(int ac, char **av, char **envp)
 		return (1);
 	init_shell(shell, envp);
 	start_interactive_signals();
-	while (1)
-	{
-		input = readline("minishell$ ");
-		if (g_signal != 0)
-		{
-			shell->last_exit_code = 128 + g_signal;
-			g_signal = 0;
-		}
-		if (!input)
-		{
-			ft_putstr_fd("exit\n", 1);
-			break ;
-		}
-		process_input(shell, input);
-	}
+	while (read_input(shell))
+		;
 	env_free(&shell->env);
 	free(shell);
 	return (0);

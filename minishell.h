@@ -20,4 +20,9 @@ void	start_execution_signals(void);
 void	set_child_signals(void);
 void	set_heredoc_signals(void);
 
+int		is_blank_input(char *input);
+void	init_shell(t_shell *shell, char **envp);
+void	clean_iteration(t_shell *shell, char *input);
+int		build_ast(t_shell *shell, char *input);
+
 #endif

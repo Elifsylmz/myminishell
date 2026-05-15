@@ -4,7 +4,7 @@ CC			= cc
 CFLAGS		= -Wall -Wextra -Werror -g
 INCLUDES	= -I. -Ilibft -Ienv -Ilexer -Iparser -Iexecutor
 
-SRCS		= main.c signals.c \
+SRCS		= main.c signals.c main_utils.c\
 			  env/env_init.c env/env_ops.c env/env_utils.c env/env_node.c \
 			  executor/exec_cmd.c executor/executor.c \
 			  executor/find_path.c executor/redirections.c \
@@ -15,7 +15,8 @@ SRCS		= main.c signals.c \
 			  executor/builtins/pwd.c executor/builtins/unset.c executor/builtins/export_print.c\
 			  executor/expander/expander_str.c executor/expander/expander.c\
 			  lexer/lexer_utils.c lexer/lexer_word.c lexer/lexer.c \
-			  parser/parser.c parser/parser_utils.c
+			  parser/parser.c parser/ast_utils.c parser/parser_redir.c \
+			  parser/parser_word.c
 
 OBJS		= $(SRCS:.c=.o)
 
