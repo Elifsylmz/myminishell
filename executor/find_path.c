@@ -47,10 +47,27 @@ static int	is_executable(char *path)
 	return (1);
 }
 
+static char	*check_cmd_in_path(char *path, char *cmd)
+{
+	char	*tmp;
+	char	*full_path;
+
+	tmp = ft_strjoin(path, "/");
+	if (!tmp)
+		return (NULL);
+	full_path = ft_strjoin(tmp, cmd);
+	free(tmp);
+	if (!full_path)
+		return (NULL);
+	if (is_executable(full_path))
+		return (full_path);
+	free(full_path);
+	return (NULL);
+}
+
 char	*find_cmd_path(char **paths, char *cmd)
 {
 	int		i;
-	char	*tmp;
 	char	*full_path;
 
 	if (!cmd || !cmd[0])
@@ -62,16 +79,9 @@ char	*find_cmd_path(char **paths, char *cmd)
 	i = 0;
 	while (paths[i])
 	{
-		tmp = ft_strjoin(paths[i], "/");
-		if (!tmp)
-			return (NULL);
-		full_path = ft_strjoin(tmp, cmd);
-		free(tmp);
-		if (!full_path)
-			return (NULL);
-		if (is_executable(full_path))
+		full_path = check_cmd_in_path(paths[i], cmd);
+		if (full_path)
 			return (full_path);
-		free(full_path);
 		i++;
 	}
 	return (NULL);

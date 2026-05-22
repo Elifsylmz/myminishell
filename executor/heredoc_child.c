@@ -41,11 +41,33 @@ static int	write_heredoc_line(t_shell *shell, int fd, char *line, int expand)
 	return (0);
 }
 
+static int	read_heredoc_loop(t_shell *shell, t_ast *node, int fd, int expand)
+{
+	char	*line;
+
+	while (1)
+	{
+		line = readline("> ");
+		if (!line || ft_strncmp(line, node->file,
+				ft_strlen(node->file) + 1) == 0)
+		{
+			free(line);
+			break ;
+		}
+		if (write_heredoc_line(shell, fd, line, expand) != 0)
+		{
+			free(line);
+			return (1);
+		}
+		free(line);
+	}
+	return (0);
+}
+
 void	run_heredoc_child(t_shell *shell, t_ast *node, char *filename)
 {
-	int		fd;
-	char	*line;
-	int		expand;
+	int	fd;
+	int	expand;
 
 	set_heredoc_signals();
 	expand = !is_quoted_delimiter(node->file_segments);
@@ -55,22 +77,10 @@ void	run_heredoc_child(t_shell *shell, t_ast *node, char *filename)
 		perror(filename);
 		exit(1);
 	}
-	while (1)
+	if (read_heredoc_loop(shell, node, fd, expand) != 0)
 	{
-		line = readline("> ");
-		if (!line || ft_strncmp(line, node->file, ft_strlen(node->file)
-				+ 1) == 0)
-		{
-			free(line);
-			break ;
-		}
-		if (write_heredoc_line(shell, fd, line, expand) != 0)
-		{
-			free(line);
-			close(fd);
-			exit(1);
-		}
-		free(line);
+		close(fd);
+		exit(1);
 	}
 	close(fd);
 	exit(0);
