@@ -52,37 +52,35 @@ static char	*resolve_cmd_path(t_shell *shell, t_ast *cmd, char ***envp,
 	return (find_cmd_path(*paths, cmd->argv[0]));
 }
 
-static void	execve_or_exit(char *cmd_path, t_ast *cmd, char **envp,
-		char **paths, t_shell *shell)
+static void	execve_or_exit(t_shell *shell, t_ast *cmd, t_exec_data *data)
 {
 	int	err;
 
-	execve(cmd_path, cmd->argv, envp);
+	execve(data->cmd_path, cmd->argv, data->envp);
 	err = errno;
 	print_cmd_error(cmd->argv[0], strerror(err));
-	free(cmd_path);
-	free_array(paths);
-	free_array(envp);
+	free(data->cmd_path);
+	free_array(data->paths);
+	free_array(data->envp);
 	child_cleanup(shell);
 	exit(execve_exit_code(err));
 }
 
 void	exec_cmd(t_ast *node, t_shell *shell)
 {
-	char	**paths;
-	char	*cmd_path;
-	char	**envp;
-	t_ast	*cmd;
+	t_ast		*cmd;
+	t_exec_data	data;
 
-	paths = NULL;
-	envp = NULL;
+	data.cmd_path = NULL;
+	data.envp = NULL;
+	data.paths = NULL;
 	prepare_cmd(node, shell, &cmd);
-	cmd_path = resolve_cmd_path(shell, cmd, &envp, &paths);
-	if (!cmd_path)
+	data.cmd_path = resolve_cmd_path(shell, cmd, &data.envp, &data.paths);
+	if (!data.cmd_path)
 	{
-		free_array(paths);
-		free_array(envp);
+		free_array(data.paths);
+		free_array(data.envp);
 		command_not_found(cmd->argv[0], shell);
 	}
-	execve_or_exit(cmd_path, cmd, envp, paths, shell);
+	execve_or_exit(shell, cmd, &data);
 }

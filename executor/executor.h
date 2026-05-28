@@ -26,6 +26,13 @@
 # include <stdio.h>
 # include <sys/wait.h>
 
+typedef struct s_exec_data
+{
+	char	*cmd_path;
+	char	**envp;
+	char	**paths;
+}	t_exec_data;
+
 char	**find_path(char **envp);
 char	*find_cmd_path(char **paths, char *cmd);
 void	execute(t_shell *shell);

@@ -21,6 +21,7 @@
 # include "../../minishell.h"
 # include <stdio.h>
 # include <limits.h>
+# include <readline/readline.h>
 
 int		is_builtin(char *cmd);
 int		run_builtin(t_shell *shell, char **argv);

@@ -14,6 +14,7 @@
 
 static void	clean_exit(t_shell *shell, int code)
 {
+	rl_clear_history();
 	free_tokens(shell->lex);
 	free_ast(shell->ast);
 	env_free(&shell->env);

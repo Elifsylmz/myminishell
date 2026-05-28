@@ -88,6 +88,7 @@ int	main(int ac, char **av, char **envp)
 	start_interactive_signals();
 	while (read_input(shell))
 		;
+	rl_clear_history();
 	env_free(&shell->env);
 	free(shell);
 	return (0);
