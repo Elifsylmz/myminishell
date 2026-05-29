@@ -15,7 +15,7 @@
 #include <signal.h>
 #include <unistd.h>
 
-volatile sig_atomic_t	g_signal = 0;
+int	g_signal = 0;
 
 void	handle_sigint(int sig)
 {

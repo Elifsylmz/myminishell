@@ -1,5 +1,0 @@
-valgrind --leak-check=full           --show-leak-kinds=all           --trace-children=yes           --trace-children-skip=/bin/*,/usr/bin/*           --track-fds=yes           --suppressions=readline.supp           ./minishell
-
-
-
-echo a | cat << e >> a > b > c << main.c

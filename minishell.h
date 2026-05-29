@@ -25,7 +25,7 @@
 # include "parser/ast.h"
 # include <signal.h>
 
-extern volatile sig_atomic_t	g_signal;
+extern int     g_signal;
 
 void	start_interactive_signals(void);
 void	start_execution_signals(void);
