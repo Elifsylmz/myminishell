@@ -6,7 +6,7 @@
 /*   By: eyilmaz <eyilmaz@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 22:01:01 by eyilmaz           #+#    #+#             */
-/*   Updated: 2026/05/15 22:01:01 by eyilmaz          ###   ########.fr       */
+/*   Updated: 2026/06/01 16:52:19 by eyilmaz          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@
 # include "parser/ast.h"
 # include <signal.h>
 
-extern int     g_signal;
+extern int	g_signal;
 
 void	start_interactive_signals(void);
 void	start_execution_signals(void);

@@ -6,7 +6,7 @@
 /*   By: eyilmaz <eyilmaz@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 21:53:38 by eyilmaz           #+#    #+#             */
-/*   Updated: 2026/05/15 22:10:35 by eyilmaz          ###   ########.fr       */
+/*   Updated: 2026/06/01 17:30:17 by eyilmaz          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ void	run_heredoc_child(t_shell *shell, t_ast *node, char *filename)
 {
 	int	fd;
 	int	expand;
+	int	code;
 
 	set_heredoc_signals();
 	expand = !is_quoted_delimiter(node->file_segments);
@@ -75,13 +76,13 @@ void	run_heredoc_child(t_shell *shell, t_ast *node, char *filename)
 	if (fd < 0)
 	{
 		perror(filename);
+		free(filename);
+		child_cleanup(shell);
 		exit(1);
 	}
-	if (read_heredoc_loop(shell, node, fd, expand) != 0)
-	{
-		close(fd);
-		exit(1);
-	}
+	code = read_heredoc_loop(shell, node, fd, expand);
 	close(fd);
-	exit(0);
+	free(filename);
+	child_cleanup(shell);
+	exit(code);
 }
